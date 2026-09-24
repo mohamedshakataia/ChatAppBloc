@@ -1,4 +1,4 @@
-import 'package:chatapp/cubits/chat_cubit/chat_cubit.dart';
+import 'package:chatapp/bloc/chat_bloc/chat_bloc.dart';
 import 'package:chatapp/models/chatmodel.dart';
 import 'package:chatapp/widget/chat_Buble.dart';
 import 'package:chatapp/widget/constants.dart';
@@ -9,7 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ChatPage extends StatelessWidget {
   ChatPage({super.key});
   static String id = 'ChatPage';
-  List<ChatModel> messageslist = [];
+  List<ChatModel> m = [];
+
   CollectionReference messages = FirebaseFirestore.instance.collection(
     'messages',
   );
@@ -33,20 +34,21 @@ class ChatPage extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: BlocBuilder<ChatCubit, ChatState>(
+            child: BlocConsumer<ChatBloc, ChatState>(
+              listener: (context, state) {
+                if (state is ChatSuccess) {
+                  m = state.messageList;
+                }
+              },
               builder: (context, state) {
-                var messageslist = BlocProvider.of<ChatCubit>(
-                  context,
-                ).messageList;
-
                 return ListView.builder(
                   controller: controllerscroll,
                   reverse: true,
-                  itemCount: messageslist.length,
+                  itemCount: m.length,
                   itemBuilder: (context, index) {
-                    return messageslist[index].emailaccount == email
-                        ? ChatBuble(mesaage: messageslist[index])
-                        : ChatBubleFriend(mesaage: messageslist[index]);
+                    return m[index].emailaccount == email
+                        ? ChatBuble(mesaage: m[index])
+                        : ChatBubleFriend(mesaage: m[index]);
                   },
                 );
               },
@@ -63,10 +65,12 @@ class ChatPage extends StatelessWidget {
                   child: TextField(
                     controller: controller,
                     onSubmitted: (value) {
-                      BlocProvider.of<ChatCubit>(context).sendMessage(
-                        value: value,
-                        timemeassge: DateTime.now().toString(),
-                        email: email,
+                      BlocProvider.of<ChatBloc>(context).add(
+                        SendMessageBloc(
+                          value: value,
+                          timemeassge: DateTime.now().toString(),
+                          email: email,
+                        ),
                       );
                       controller.clear();
                       controllerscroll.animateTo(

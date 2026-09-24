@@ -1,4 +1,4 @@
-import 'package:chatapp/cubits/bloc/auth_bloc.dart';
+import 'package:chatapp/bloc/auth_bloc/auth_bloc.dart';
 import 'package:chatapp/helper/showsnackbar.dart';
 import 'package:chatapp/page/login.dart';
 import 'package:chatapp/widget/constants.dart';

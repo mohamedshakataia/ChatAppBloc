@@ -1,5 +1,6 @@
-import 'package:chatapp/cubits/bloc/auth_bloc.dart';
-import 'package:chatapp/cubits/chat_cubit/chat_cubit.dart';
+import 'package:chatapp/bloc/auth_bloc/auth_bloc.dart';
+import 'package:chatapp/bloc/chat_bloc/chat_bloc.dart';
+
 import 'package:chatapp/helper/showsnackbar.dart';
 import 'package:chatapp/page/chat_page.dart';
 import 'package:chatapp/page/register.dart';
@@ -32,7 +33,7 @@ class _LoginchatState extends State<Loginchat> {
         if (state is LoginLoading) {
           isloading = true;
         } else if (state is LoginSuccess) {
-          BlocProvider.of<ChatCubit>(context).getMessage();
+          BlocProvider.of<ChatBloc>(context).add(GetMessageBloc());
           Navigator.pushNamed(context, ChatPage.id, arguments: email);
           isloading = false;
         } else if (state is LoginFailure) {
